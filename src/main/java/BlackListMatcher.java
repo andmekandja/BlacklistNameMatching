@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -35,7 +36,7 @@ public class BlackListMatcher {
         List<String> noiseWordList = new ArrayList<>();
         List<String> results = new ArrayList<>();
         prepareNoiseWordList(noise_file, noiseWordList);
-        getStreamFromFile(names_file).forEach(item -> compare(name, noiseWordList, results, item));
+        Objects.requireNonNull(getStreamFromFile(names_file)).forEach(item -> compare(name, noiseWordList, results, item));
         return results;
     }
 
@@ -47,7 +48,7 @@ public class BlackListMatcher {
      */
     private void prepareNoiseWordList(String noise_file, List<String> noiseWordList) {
         if (noise_file != null)
-            noiseWordList.addAll(getStreamFromFile(noise_file).collect(toList()));
+            noiseWordList.addAll(Objects.requireNonNull(getStreamFromFile(noise_file)).collect(toList()));
     }
 
     /**
@@ -67,7 +68,6 @@ public class BlackListMatcher {
                 //|| compareWords(name, item)  <--Deprecated
                 || FuzzySearch.tokenSortPartialRatio(name, item) > 70
                 ) {
-            System.out.println(name + " - " + item + " : " + FuzzySearch.tokenSortPartialRatio(name, item));
             results.add(originalItem);
         }
     }
@@ -110,14 +110,13 @@ public class BlackListMatcher {
     private boolean compareWords(String name, String item) {
         if (name.contains(item)) return true;
         if (item.contains(name)) return true;
-        List<String> nameAsList = new ArrayList<String>(Arrays.asList(name.split("\\s+")));
-        List<String> itemAsList = new ArrayList<String>(Arrays.asList(item.split("\\s+")));
+        List<String> nameAsList = new ArrayList<>(Arrays.asList(name.split("\\s+")));
+        List<String> itemAsList = new ArrayList<>(Arrays.asList(item.split("\\s+")));
         List<String> common = nameAsList.stream().filter(itemAsList::contains).collect(toList());
         double maxLenght = Math.max(nameAsList.size(), itemAsList.size());
         double minLenght = Math.min(nameAsList.size(), itemAsList.size());
 
-        if (common.size() >= minLenght || common.size() >= maxLenght / 2) return true;
-        return false;
+        return common.size() >= minLenght || common.size() >= maxLenght / 2;
     }
 
     /**
@@ -128,11 +127,9 @@ public class BlackListMatcher {
      */
     private Stream<String> getStreamFromFile(String file_name) {
         try {
-            return Files.lines(Paths.get(getClass().getClassLoader()
-                    .getResource(file_name).toURI()));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            return Files.lines(Paths.get(Objects.requireNonNull(getClass().getClassLoader()
+                    .getResource(file_name)).toURI()));
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
         return null;

@@ -115,7 +115,6 @@ public class BlackListMatcher {
         List<String> common = nameAsList.stream().filter(itemAsList::contains).collect(toList());
         double maxLenght = Math.max(nameAsList.size(), itemAsList.size());
         double minLenght = Math.min(nameAsList.size(), itemAsList.size());
-
         return common.size() >= minLenght || common.size() >= maxLenght / 2;
     }
 
@@ -136,4 +135,3 @@ public class BlackListMatcher {
     }
 
 }
-

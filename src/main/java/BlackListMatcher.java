@@ -24,6 +24,12 @@ import static java.util.stream.Collectors.toList;
 public class BlackListMatcher {
 
     /**
+     * In case of partial match - sensitivity is set by this percentage.
+     * Smaller number will return more matches.
+     */
+    private static final int PARTIAL_MATCHING_PERCENTAGE = 70;
+
+    /**
      * This method is used to find matches from blacklist.
      *
      * @param name       Name to validate against blacklist.
@@ -66,7 +72,7 @@ public class BlackListMatcher {
         item = removeNoise(item, noiseWordList);
         if (item.equals(name)
                 //|| compareWords(name, item)  <--Deprecated
-                || FuzzySearch.tokenSortPartialRatio(name, item) > 70
+                || FuzzySearch.tokenSortPartialRatio(name, item) > PARTIAL_MATCHING_PERCENTAGE
                 ) {
             results.add(originalItem);
         }

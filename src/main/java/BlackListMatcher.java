@@ -106,7 +106,7 @@ public class BlackListMatcher {
     }
 
     /**
-     * This method converts strings into lowercase, trims and removes the noise words.
+     * This method is deprecated and is not deleted for backup functionality purpose.
      *
      * @param name The inserted name.
      * @param item Name from black list to compare with.

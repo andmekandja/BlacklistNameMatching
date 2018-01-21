@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toList;
  * <h1>Blacklist Name Matching</h1>
  * This is algorithm to compare given name against blacklist to detect such
  * transfers.
+ * Unit tests can be found from test folder.
  *
  * @author Tanel Pikkel
  * @version 1.0

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -67,6 +68,10 @@ public class BlackListMatcher {
      * @param originalItem  Current row from black list file.
      */
     private void compare(String name, List<String> noiseWordList, List<String> results, String originalItem) {
+        if (compareInDiffLanguages(name, originalItem)) {
+            results.add(originalItem);
+            return;
+        }
         name = prepareString(name);
         name = removeNoise(name, noiseWordList);
         String item = prepareString(originalItem);
@@ -139,6 +144,19 @@ public class BlackListMatcher {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * This method is used to compare strings in different locales.
+     *
+     * @param name The name inserted into search.
+     * @param item Current name(row) from blacklist.
+     * @return boolean Returns true if names match.
+     */
+    private boolean compareInDiffLanguages(String name, String item) {
+        Collator collator = Collator.getInstance();
+        collator.setStrength(Collator.PRIMARY);
+        return collator.compare(name.toLowerCase(), item.toLowerCase()) == 0;
     }
 
 }

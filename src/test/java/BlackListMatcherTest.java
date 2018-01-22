@@ -8,9 +8,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class BlackListMatcherTest {
-    BlackListMatcher matcher = new BlackListMatcher();
-    List<String> expected = new ArrayList<>(Arrays.asList("Osama Bin Laden"));
-    List<String> variations = new ArrayList<>(Arrays.asList(
+    private BlackListMatcher matcher = new BlackListMatcher();
+    private List<String> expected = new ArrayList<>(Arrays.asList("Osama Bin Laden"));
+    private List<String> variations = new ArrayList<>(Arrays.asList(
             "Osama Bin Laden",
             "Osama Laden",
             "Bin Laden, Osama",
@@ -19,18 +19,17 @@ public class BlackListMatcherTest {
             "osama and bin laden",
             "Dr Osama Bin Laden"
     ));
-    List<String> partial = new ArrayList<>(Arrays.asList(
+    private List<String> partial = new ArrayList<>(Arrays.asList(
             "Osa Bin Laden",
             "Osam Lade",
             "B6n La9en, Osama",
             "dr ladenr osamar binr"
     ));
-    List<String> mustFail = new ArrayList<>(Arrays.asList(
+    private List<String> mustFail = new ArrayList<>(Arrays.asList(
             "Osama Jackson",
             "Elvis Laden"
     ));
-
-
+    private List<String> expectedInDiffLang = new ArrayList<>(Arrays.asList("debarquer"));
 
     @Test
     public void TestFullWords() {
@@ -48,5 +47,10 @@ public class BlackListMatcherTest {
     public void TestFalsePositives() {
         mustFail.forEach(i -> assertNotEquals(expected,
                 matcher.searchFromBlackList(i, "blacklist.txt", "noise.txt")));
+    }
+
+    @Test
+    public void TestDiffLang() {
+        assertEquals(expectedInDiffLang, matcher.searchFromBlackList("débárquér", "blacklist.txt", "noise.txt"));
     }
 }

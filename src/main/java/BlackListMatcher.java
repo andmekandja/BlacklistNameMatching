@@ -70,6 +70,10 @@ public class BlackListMatcher {
      * @param originalItem  Current row from black list file.
      */
     private void compare(String name, List<String> noiseWordList, List<String> results, String originalItem) {
+        if (compareInDiffLanguages(name, originalItem)) {
+            results.add(originalItem);
+            return;
+        }
         name = prepareString(name, noiseWordList);
         String item = prepareString(originalItem, noiseWordList);
         if (item.equals(name)
@@ -81,13 +85,14 @@ public class BlackListMatcher {
     }
 
     /**
-     * This method converts strings into lowercase, removes everything that is not a character and trims.
+     * This method converts strings into lowercase, removes everything that is not a character or accent and trims.
      *
      * @param string The string to be converted.
      * @return String Returns input string in lowercase, trimmed and symbols are removed.
      */
     private String prepareString(String string, List<String> noiseWordList) {
         string = deAccent(string);
+        System.out.println(string);
         string = string
                 .toLowerCase()
                 .replaceAll("[^a-z\\s]", "")
@@ -97,10 +102,10 @@ public class BlackListMatcher {
     }
 
     /**
-     * This method converts strings into lowercase, removes everything that is not a character and trims.
+     * This method deaccents string.
      *
      * @param str The string to be converted.
-     * @return String Returns input string in en locale.
+     * @return String Returns input string without accent chars.
      */
     public String deAccent(String str) {
         String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);

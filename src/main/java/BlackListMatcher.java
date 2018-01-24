@@ -92,7 +92,6 @@ public class BlackListMatcher {
      */
     private String prepareString(String string, List<String> noiseWordList) {
         string = deAccent(string);
-        System.out.println(string);
         string = string
                 .toLowerCase()
                 .replaceAll("[^a-z\\s]", "")

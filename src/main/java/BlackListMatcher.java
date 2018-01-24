@@ -140,7 +140,7 @@ public class BlackListMatcher {
         try {
             return Files.lines(Paths.get(Objects.requireNonNull(getClass().getClassLoader()
                     .getResource(file_name)).toURI()));
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException | IOException | NullPointerException e) {
             e.printStackTrace();
         }
         return Stream.empty();

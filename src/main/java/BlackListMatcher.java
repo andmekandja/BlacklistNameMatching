@@ -44,7 +44,7 @@ public class BlackListMatcher {
         List<String> noiseWordList = new ArrayList<>();
         List<String> results = new ArrayList<>();
         prepareNoiseWordList(noise_file, noiseWordList);
-        Objects.requireNonNull(getStreamFromFile(names_file)).forEach(item -> compare(name, noiseWordList, results, item));
+        getStreamFromFile(names_file).forEach(item -> compare(name, noiseWordList, results, item));
         return results;
     }
 

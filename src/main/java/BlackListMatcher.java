@@ -143,7 +143,7 @@ public class BlackListMatcher {
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return Stream.empty();
     }
 
     /**

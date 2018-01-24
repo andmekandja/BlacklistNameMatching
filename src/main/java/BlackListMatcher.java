@@ -5,10 +5,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.Collator;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -68,14 +70,8 @@ public class BlackListMatcher {
      * @param originalItem  Current row from black list file.
      */
     private void compare(String name, List<String> noiseWordList, List<String> results, String originalItem) {
-        if (compareInDiffLanguages(name, originalItem)) {
-            results.add(originalItem);
-            return;
-        }
-        name = prepareString(name);
-        name = removeNoise(name, noiseWordList);
-        String item = prepareString(originalItem);
-        item = removeNoise(item, noiseWordList);
+        name = prepareString(name, noiseWordList);
+        String item = prepareString(originalItem, noiseWordList);
         if (item.equals(name)
                 //|| compareWords(name, item)  <--Deprecated
                 || FuzzySearch.tokenSortPartialRatio(name, item) > PARTIAL_MATCHING_PERCENTAGE
@@ -90,12 +86,26 @@ public class BlackListMatcher {
      * @param string The string to be converted.
      * @return String Returns input string in lowercase, trimmed and symbols are removed.
      */
-    private String prepareString(String string) {
-        return string
+    private String prepareString(String string, List<String> noiseWordList) {
+        string = deAccent(string);
+        string = string
                 .toLowerCase()
                 .replaceAll("[^a-z\\s]", "")
                 .replaceAll(" +", " ")
                 .trim();
+        return removeNoise(string, noiseWordList);
+    }
+
+    /**
+     * This method converts strings into lowercase, removes everything that is not a character and trims.
+     *
+     * @param str The string to be converted.
+     * @return String Returns input string in en locale.
+     */
+    public String deAccent(String str) {
+        String nfdNormalizedString = Normalizer.normalize(str, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(nfdNormalizedString).replaceAll("");
     }
 
     /**
